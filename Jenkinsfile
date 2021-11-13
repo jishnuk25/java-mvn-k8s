@@ -4,6 +4,13 @@ pipeline{
         VERSION = "${env.BUILD_ID}"
     }
     stages{
+        
+        stage("Fix the permission issue") {
+            agent any
+            steps {
+                sh "sudo chown root:jenkins /run/docker.sock"
+            }
+        }
         stage("sonar quality check"){
             agent {
                 docker {
@@ -23,8 +30,7 @@ pipeline{
                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
                       }
                     }
-
-                }  
+                }
             }
         }
     }
