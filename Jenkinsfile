@@ -7,14 +7,12 @@ pipeline {
         stage("sonar quality check"){
             agent {
                 docker {
-                    image 'openjdk:11'
+                    image 'maven:latest'
                 }
             }
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'sonar-token') {
-                            sh 'sudo apt-get update'
-                            sh 'sudo apt-get install maven'
                             sh 'mvn sonar:sonar'
                     }
                     timeout(time: 1, unit: 'HOURS') {
