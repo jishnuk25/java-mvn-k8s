@@ -1,22 +1,20 @@
-pipeline{
+pipeline {
     agent any 
-    environment{
+    environment {
         VERSION = "${env.BUILD_ID}"
     }
-    stages{
+    stages {
         stage("sonar quality check"){
             agent {
                 docker {
                     image 'openjdk:11'
                 }
             }
-            steps{
-                script{
+            steps {
+                script {
                     withSonarQubeEnv(credentialsId: 'sonar-token') {
-                            sh 'chmod +x gradlew'
-                            sh './gradlew sonarqube'
+                            sh 'mvn sonar:sonar'
                     }
-
                     timeout(time: 1, unit: 'HOURS') {
                       def qg = waitForQualityGate()
                       if (qg.status != 'OK') {
