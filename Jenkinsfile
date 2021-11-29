@@ -13,6 +13,8 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'sonar-token') {
+                            sh 'sudo apt-get update'
+                            sh 'sudo apt-get install maven'
                             sh 'mvn sonar:sonar'
                     }
                     timeout(time: 1, unit: 'HOURS') {
