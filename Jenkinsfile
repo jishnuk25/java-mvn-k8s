@@ -12,17 +12,19 @@ pipeline {
             }
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'sonar_test') {
+                    withSonarQubeEnv(credentialsId: 'sonar-token') {
                             sh 'mvn sonar:sonar'
                     }
-                    /*timeout(time: 1, unit: 'MINUTES') {
+                    timeout(2) {
                       def qg = waitForQualityGate()
-                      if (qg.status != 'Passed') {
+                      if (qg.status != 'OK') {
                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
                       }
-                    }*/
+                        //note: if this step fails try with removing the tail "/" from sonar server url from the config in jenkins.
+                    }
                 }
             }
         }
     }
 }
+
