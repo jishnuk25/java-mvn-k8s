@@ -25,6 +25,20 @@ pipeline {
                 }
             }
         }
+        stage("docker build & push to nexus") {
+            steps{
+                script{
+                    withCredentials([
+                    string(credentialsId: 'nexus_address', variable: 'nexus_address'), 
+                    usernamePassword(credentialsId: 'nexus_creds', passwordVariable:'nexus_password', usernameVariable: 'nexus_user')]){
+                        docker build -t $nexus_address/loginapp:${VERSION}
+                        docker login -u $nexus_user -p $nexus_password $nexus_address
+                        docker push $nexus_address/loginapp:${VERSION}
+                        docker rmi $nexus_address/loginapp:${VERSION}
+                    }
+                }
+            }
+        }
     }
 }
 
