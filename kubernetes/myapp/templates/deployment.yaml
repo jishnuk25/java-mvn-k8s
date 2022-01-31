@@ -15,7 +15,7 @@ spec:
         {{- include "myapp.selectorLabels" . | nindent 8 }}
     spec:
       imagePullSecrets:
-        - name: registry-secret
+        - name: registry-secret # secret created in master for authorizing private registry
       containers:
         - name: {{ .Chart.Name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}

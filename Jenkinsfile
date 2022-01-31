@@ -1,9 +1,7 @@
-pipeline {
     agent any 
     environment {
         VERSION = "${env.BUILD_ID}"
     }
-    stages {
         stage("sonar quality check"){
             agent {
                 docker {
@@ -68,6 +66,17 @@ pipeline {
                 }
             }
         }
+        stage('deploy to kubernetes') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'nexus_address', variable: 'nexus_address'),
+                    kubeconfigFile(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh 'helm upgrade --install --set image.repository="${nexus_address}/loginapp" --set image.tag="${VERSION}"'
+                    
+                    // on master: kubectl create secret docker-registry registry-secret --docker-server=${nexus_address} --docker-username=admin --docker-password=admin --docker-email=not-needed@mail.com
+                    // kubectl create secret docker-registry registry-secret --docker-server=10.182.0.3:8083 --docker-username=admin --docker-password=admin --docker-email=not-needed@mail.com
+                }
+            }
+        }
     }
 }
-
