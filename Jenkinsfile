@@ -78,7 +78,7 @@ pipeline {
                     string(credentialsId: 'nexus_address', variable: 'nexus_address'),
                     kubeconfigFile(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     dir('kubernetes/') {    
-                        sh 'helm upgrade --install --set image.repository="${nexus_address}/loginapp" --set image.tag="${VERSION}"'
+                        sh 'helm upgrade --install --set image.repository="${nexus_address}/loginapp" --set image.tag="${VERSION}" loginapp myapp/ '
                     
                         // on master: kubectl create secret docker-registry registry-secret --docker-server=${nexus_address} --docker-username=admin --docker-password=admin --docker-email=not-needed@mail.com
                         }
