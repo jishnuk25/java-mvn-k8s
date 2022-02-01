@@ -97,7 +97,6 @@ pipeline {
                 }
             }
         }
-    }
         stage('Deployment verification') {
             steps {
                 script {
@@ -107,7 +106,7 @@ pipeline {
                 }
             }
         }
-        
+    }
     post {
         always {
             mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> build URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: 'jishnukannappilavu@gmail.com'
