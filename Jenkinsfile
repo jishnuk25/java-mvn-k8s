@@ -71,6 +71,17 @@ pipeline {
                 }
             }
         }
+        stage('Manual approval') {
+            steps {
+                script {
+                    timeout(2) {
+                        mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Request you to go to the build URL and do the necessary approvals for deployment to proceed. <br> build URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: 'jishnukannappilavu@gmail.com'
+                        input(id: "Deployment approval", message: "Deploy ${params.project_name}?", ok: 'Deploy')
+                    }
+                }
+            }
+        }
+
         stage('deploy to kubernetes') {
             steps {
                 script{
@@ -87,6 +98,16 @@ pipeline {
             }
         }
     }
+        stage('Deployment verification') {
+            steps {
+                script {
+                    withCredentials([kubeconfigFile(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh 'kubectl run curl --image=curlimages/curl -i --rm --restart=Never --curl loginapp-myapp:8080'
+                    }
+                }
+            }
+        }
+        
     post {
         always {
             mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> build URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: 'jishnukannappilavu@gmail.com'
