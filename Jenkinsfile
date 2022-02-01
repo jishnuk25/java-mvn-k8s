@@ -80,11 +80,16 @@ pipeline {
                     dir('kubernetes/') {    
                         sh 'helm upgrade --install --set image.repository="${nexus_address}/loginapp" --set image.tag="${VERSION}" loginapp myapp/ '
                     
-                        // on master: kubectl create secret docker-registry registry-secret --docker-server=${nexus_address} --docker-username=admin --docker-password=admin --docker-email=not-needed@mail.com
+                        // on master: kubectl create secret docker-registry registry-secret --docker-server=10.182.0.3:8083 --docker-username=admin --docker-password=nexus_gcp --docker-email=not-needed@mail.com
                         }
                     }               
                 }
             }
+        }
+    }
+    post {
+        always {
+            mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> build URL: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: 'jishnukannappilavu@gmail.com'
         }
     }
 }
