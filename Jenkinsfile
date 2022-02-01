@@ -101,7 +101,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([kubeconfigFile(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                        sh 'kubectl run curl --image=curlimages/curl -i --rm --restart=Never --curl loginapp-myapp:8080'
+                        sh 'kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl loginapp-myapp:8080'
                     }
                 }
             }
